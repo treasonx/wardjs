@@ -6,6 +6,8 @@
   var DEFAULT_ENTRY_POINT = '<%= entryPoint %>';
   var DEFAULT_NAMESPACE = '<%= namespace %>';
 
+  var settings = {};
+
   /*
    * Locates the current script tag.
    *
@@ -114,7 +116,6 @@
    */
   function gatherSettings(ele) {
     var dataPtrn = /^data-ward-/;
-    var settings = {};
     var key;
 
     for (var att, i = 0, atts = ele.attributes, n = atts.length; i < n; i++){
@@ -153,7 +154,7 @@
    *
    * @returns public API
    */
-  function bootWard(global) {
+  function bootWard(global, cb) {
 
     var myScriptTag;
     var settings;
@@ -188,7 +189,7 @@
     content += '"></script>"';
 
     waitForBody(global, function () {
-      renderIframe(global, content, global.document.body);
+      renderIframe(global, content, global.document.body, cb);
     });
 
     return {};
@@ -204,9 +205,11 @@
     });
   } else {
     // expose the public API to the root context
-    if(settings.namespace && !root[settings.namespace]) {
-      root[settings.namespace] = bootWard(root);
-    }
+    var api = bootWard(root, function () {
+      if(settings.namespace && !root[settings.namespace]) {
+        root[settings.namespace] = api;
+      }
+    });
   }
 
 }(this));
