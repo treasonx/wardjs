@@ -204,8 +204,8 @@
     });
   } else {
     // expose the public API to the root context
-    if(!root[settings.environment]) {
-      root[settings.entrypoint] = bootWard(root);
+    if(settings.namespace && !root[settings.namespace]) {
+      root[settings.namespace] = bootWard(root);
     }
   }
 
